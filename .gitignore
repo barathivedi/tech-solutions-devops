@@ -1,0 +1,13 @@
+.env
+.env.*
+!.env.example
+*.pem
+*.ppk
+*.log
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+target/
+.idea/
+.vscode/
