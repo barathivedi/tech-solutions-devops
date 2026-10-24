@@ -1,0 +1,20 @@
+frontend:
+  replicaCount: 2
+  image:
+    repository: barathivedi/tech-solutions-frontend
+    tag: v4
+    pullPolicy: IfNotPresent
+  service:
+    type: NodePort
+    port: 80
+    nodePort: 30080
+
+backend:
+  replicaCount: 1
+  image:
+    repository: barathivedi/tech-solutions-backend
+    tag: v2
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 5000
