@@ -1,4 +1,4 @@
-# Project 4: Containerized Application Deployment for Tech Solutions
+# Project 1: Containerized Application Deployment for Tech Solutions
 
 ## Project Overview
 This project aims to demonstrate how a web application can be containerized and deployed using DevOps tools.
