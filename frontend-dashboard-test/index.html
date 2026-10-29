@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tech Solutions | IT Service Desk</title>
+
+<style>
+:root {
+    --primary: #4f46e5;
+    --primary-light: #eef2ff;
+    --background: #f5f7fb;
+    --surface: #ffffff;
+    --text: #172033;
+    --muted: #788397;
+    --border: #e7eaf1;
+    --green: #16845b;
+    --orange: #c77712;
+    --red: #d14343;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: var(--background);
+    color: var(--text);
+}
+
+button, input, select, textarea {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+.app {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 245px;
+    flex-shrink: 0;
+    background: #171b35;
+    color: #fff;
+    padding: 26px 18px;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 8px 30px;
+    border-bottom: 1px solid #30344d;
+}
+
+.brand-icon {
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    background: var(--primary);
+    font-size: 23px;
+}
+
+.brand h2 {
+    margin: 0;
+    font-size: 17px;
+}
+
+.brand p {
+    margin: 5px 0 0;
+    font-size: 11px;
+    color: #b6bdd4;
+}
+
+.nav-label {
+    margin: 30px 10px 12px;
+    color: #929bb8;
+    font-size: 10px;
+    font-weight: bold;
+    letter-spacing: 1.5px;
+}
+
+.nav-item {
+    display: block;
+    width: 100%;
+    padding: 13px 12px;
+    margin-bottom: 7px;
+    text-align: left;
+    border: 0;
+    border-radius: 9px;
+    color: #c8cde0;
+    background: transparent;
+    font-size: 14px;
+}
+
+.nav-item.active,
+.nav-item:hover {
+    background: #343963;
+    color: white;
+}
+
+.sidebar-note {
+    margin-top: 45px;
+    padding: 15px;
+    border: 1px solid #363b59;
+    border-radius: 12px;
+    color: #c8cde0;
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+.sidebar-note strong {
+    color: #fff;
+}
+
+.main {
+    flex: 1;
+    min-width: 0;
+}
+
+.topbar {
+    min-height: 82px;
+    padding: 18px 32px;
+    background: white;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 18px;
+}
+
+.topbar h1 {
+    margin: 0;
+    font-size: 22px;
+}
+
+.topbar p {
+    margin: 6px 0 0;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.avatar {
+    width: 39px;
+    height: 39px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--primary-light);
+    color: var(--primary);
+    font-weight: bold;
+}
+
+.content {
+    max-width: 1450px;
+    margin: auto;
+    padding: 30px 32px;
+}
+
+.welcome {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 26px;
+}
+
+.welcome h2 {
+    margin: 0;
+    font-size: 23px;
+}
+
+.welcome p {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.6;
+    margin: 9px 0 0;
+}
+
+.primary-btn {
+    background: var(--primary);
+    color: white;
+    border: 0;
+    border-radius: 8px;
+    padding: 12px 17px;
+    font-weight: bold;
+    font-size: 13px;
+}
+
+.primary-btn:hover {
+    background: #3730a3;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 17px;
+    margin-bottom: 25px;
+}
+
+.stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    padding: 21px;
+    box-shadow: 0 3px 12px rgba(25, 35, 70, .025);
+}
+
+.stat-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+
+.stat-label {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.stat-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    background: var(--primary-light);
+    font-size: 18px;
+}
+
+.stat-number {
+    margin: 17px 0 8px;
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.stat-foot {
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.panel {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    margin-bottom: 24px;
+    overflow: hidden;
+}
+
+.panel-heading {
+    padding: 21px 23px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    border-bottom: 1px solid var(--border);
+}
+
+.panel-heading h3 {
+    margin: 0;
+    font-size: 16px;
+}
+
+.panel-heading p {
+    color: var(--muted);
+    font-size: 12px;
+    margin: 6px 0 0;
+}
+
+.filters {
+    padding: 17px 23px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.field {
+    padding: 10px 12px;
+    border: 1px solid #dfe3ed;
+    border-radius: 7px;
+    background: white;
+    color: var(--text);
+    min-width: 145px;
+    outline: none;
+}
+
+.field:focus {
+    border-color: var(--primary);
+}
+
+.search {
+    flex: 1;
+    min-width: 190px;
+}
+
+.table-wrap {
+    width: 100%;
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    white-space: nowrap;
+}
+
+th {
+    padding: 14px 20px;
+    background: #fafbfe;
+    color: #788397;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+}
+
+td {
+    padding: 17px 20px;
+    border-top: 1px solid #edf0f5;
+    font-size: 12px;
+}
+
+td strong {
+    font-size: 12px;
+}
+
+.subtext {
+    display: block;
+    color: var(--muted);
+    margin-top: 5px;
+    font-size: 11px;
+}
+
+.badge {
+    display: inline-block;
+    padding: 6px 9px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: bold;
+}
+
+.priority-High {
+    background: #fff0ef;
+    color: var(--red);
+}
+
+.priority-Medium {
+    background: #fff6e8;
+    color: var(--orange);
+}
+
+.priority-Low {
+    background: #eaf8f0;
+    color: var(--green);
+}
+
+.status-Open {
+    background: #eef2ff;
+    color: #4f46e5;
+}
+
+.status-In-Progress {
+    background: #fff6e8;
+    color: #ad6b10;
+}
+
+.status-Resolved {
+    background: #eaf8f0;
+    color: var(--green);
+}
+
+.status-select {
+    max-width: 135px;
+    min-width: 115px;
+    padding: 7px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: white;
+    font-size: 11px;
+}
+
+.delete-btn {
+    border: 0;
+    color: var(--red);
+    background: transparent;
+    font-size: 12px;
+}
+
+.empty {
+    text-align: center;
+    color: var(--muted);
+    padding: 40px 15px;
+}
+
+.form-panel {
+    padding: 24px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 17px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group.full {
+    grid-column: 1 / -1;
+}
+
+.form-group label {
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #dfe3ed;
+    border-radius: 7px;
+    background: white;
+    color: var(--text);
+}
+
+.form-group textarea {
+    min-height: 105px;
+    resize: vertical;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 22px;
+}
+
+.secondary-btn {
+    padding: 11px 16px;
+    background: white;
+    border: 1px solid #dfe3ed;
+    border-radius: 8px;
+    color: var(--text);
+}
+
+.hidden {
+    display: none !important;
+}
+
+.footer {
+    padding: 10px 0 20px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.toast {
+    position: fixed;
+    right: 22px;
+    bottom: 22px;
+    padding: 15px 20px;
+    background: #172033;
+    color: white;
+    border-radius: 9px;
+    box-shadow: 0 8px 30px #0002;
+    font-size: 13px;
+    z-index: 10;
+}
+
+@media (max-width: 1000px) {
+    .stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .sidebar {
+        width: 205px;
+    }
+
+    .content {
+        padding: 25px 20px;
+    }
+
+    .topbar {
+        padding: 18px 20px;
+    }
+}
+
+@media (max-width: 650px) {
+    .app {
+        display: block;
+    }
+
+    .sidebar {
+        width: 100%;
+        padding: 15px;
+    }
+
+    .brand {
+        padding-bottom: 12px;
+    }
+
+    .nav-label,
+    .sidebar-note {
+        display: none;
+    }
+
+    .nav-item {
+        display: inline-block;
+        width: auto;
+        margin: 12px 3px 0 0;
+        padding: 10px;
+        font-size: 11px;
+    }
+
+    .topbar {
+        min-height: 70px;
+    }
+
+    .topbar h1 {
+        font-size: 17px;
+    }
+
+    .profile span {
+        display: none;
+    }
+
+    .content {
+        padding: 20px 13px;
+    }
+
+    .welcome {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .welcome h2 {
+        font-size: 20px;
+    }
+
+    .stats {
+        gap: 10px;
+    }
+
+    .stat-card {
+        padding: 14px;
+    }
+
+    .stat-number {
+        font-size: 25px;
+    }
+
+    .stat-label {
+        font-size: 11px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-group.full {
+        grid-column: auto;
+    }
+
+    .panel-heading {
+        padding: 17px;
+    }
+
+    .filters {
+        padding: 13px;
+    }
+
+    .field {
+        width: 100%;
+    }
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-icon">⚙</div>
+            <div>
+                <h2>Tech Solutions</h2>
+                <p>IT SERVICE DESK</p>
+            </div>
+        </div>
+
+        <div class="nav-label">WORKSPACE</div>
+        <button class="nav-item active" id="dashboardNav" type="button">▦ &nbsp; Dashboard</button>
+        <button class="nav-item" id="ticketsNav" type="button">▤ &nbsp; All Tickets</button>
+        <button class="nav-item" id="detectedIssuesNav" type="button">⚠ &nbsp; Detected Issues</button>
+        <button class="nav-item" id="createNav" type="button">＋ &nbsp; Create Ticket</button>
+
+        <div class="nav-label">PLATFORM</div>
+        <button class="nav-item" id="platformNav" type="button">⬡ &nbsp; DevOps Platform</button>
+
+        <div class="sidebar-note">
+            <strong>Service Desk</strong><br>
+            Manage IT incidents, support requests, priorities and resolutions from one place.
+        </div>
+    </aside>
+
+    <main class="main">
+        <header class="topbar">
+            <div>
+                <h1>IT Support Dashboard</h1>
+                <p>Tech Solutions / Service Management</p>
+            </div>
+            <div class="profile">
+                <div class="avatar">IT</div>
+                <span>Support Administrator</span>
+            </div>
+        </header>
+
+        <div class="content">
+
+            <section class="welcome" id="welcomeSection">
+                <div>
+                    <h2>Good day, Support Team 👋</h2>
+                    <p>Track incidents, manage support requests and keep your users productive.</p>
+                </div>
+                <button class="primary-btn" id="newTicketBtn" type="button">＋ Create New Ticket</button>
+            </section>
+
+            <section class="stats" id="statsSection">
+                <div class="stat-card">
+                    <div class="stat-top">
+                        <span class="stat-label">Total Tickets</span>
+                        <span class="stat-icon">🎫</span>
+                    </div>
+                    <div class="stat-number" id="totalCount">0</div>
+                    <div class="stat-foot">All recorded support tickets</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-top">
+                        <span class="stat-label">Open Tickets</span>
+                        <span class="stat-icon">📬</span>
+                    </div>
+                    <div class="stat-number" id="openCount">0</div>
+                    <div class="stat-foot">Waiting for support</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-top">
+                        <span class="stat-label">In Progress</span>
+                        <span class="stat-icon">🛠️</span>
+                    </div>
+                    <div class="stat-number" id="progressCount">0</div>
+                    <div class="stat-foot">Currently being investigated</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-top">
+                        <span class="stat-label">Resolved</span>
+                        <span class="stat-icon">✅</span>
+                    </div>
+                    <div class="stat-number" id="resolvedCount">0</div>
+                    <div class="stat-foot">Successfully completed tickets</div>
+                </div>
+            </section>
+
+            <section class="panel hidden" id="formPanel">
+                <div class="panel-heading">
+                    <div>
+                        <h3>Create Support Ticket</h3>
+                        <p>Enter the user's details and describe the IT issue.</p>
+                    </div>
+                </div>
+
+                <div class="form-panel">
+                    <form id="ticketForm">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="requester">Requester Name *</label>
+                                <input id="requester" name="requester" required maxlength="100" placeholder="e.g. Rahul Kumar">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="email">Email Address *</label>
+                                <input id="email" name="email" type="email" required maxlength="150" placeholder="user@company.com">
+                            </div>
+
+                            <div class="form-group full">
+                                <label for="title">Issue Title *</label>
+                                <input id="title" name="title" required maxlength="150" placeholder="e.g. Laptop is not connecting to Wi-Fi">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="category">Issue Category *</label>
+                                <select id="category" name="category" required>
+                                    <option value="Hardware">Hardware</option>
+                                    <option value="Software">Software</option>
+                                    <option value="Network">Network</option>
+                                    <option value="Email">Email</option>
+                                    <option value="Access">Access / Account</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="priority">Priority *</label>
+                                <select id="priority" name="priority" required>
+                                    <option value="Low">Low</option>
+                                    <option value="Medium" selected>Medium</option>
+                                    <option value="High">High</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group full">
+                                <label for="description">Issue Description *</label>
+                                <textarea id="description" name="description" required maxlength="2000" placeholder="Describe the issue, error message and troubleshooting already performed..."></textarea>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button class="secondary-btn" id="cancelBtn" type="button">Cancel</button>
+                            <button class="primary-btn" type="submit">Submit Ticket</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <section class="panel" id="ticketsPanel">
+                <div class="panel-heading">
+                    <div>
+                        <h3 id="ticketHeading">Recent Support Tickets</h3>
+                        <p>Review issues and update their status.</p>
+                    </div>
+                </div>
+
+                <div class="filters">
+                    <input class="field search" id="searchInput" placeholder="Search ticket, requester or issue...">
+                    <select class="field" id="statusFilter" aria-label="Filter by status">
+                        <option value="All">All Statuses</option>
+                        <option value="Open">Open</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Resolved">Resolved</option>
+                    </select>
+                    <select class="field" id="priorityFilter" aria-label="Filter by priority">
+                        <option value="All">All Priorities</option>
+                        <option value="High">High</option>
+                        <option value="Medium">Medium</option>
+                        <option value="Low">Low</option>
+                    </select>
+                </div>
+
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Ticket</th>
+                                <th>Issue / Requester</th>
+                                <th>Category</th>
+                                <th>Priority</th>
+                                <th>Status</th>
+                                <th>Created</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ticketTable"></tbody>
+                    </table>
+                    <div class="empty hidden" id="emptyMessage">
+                        No tickets found. Create a ticket to get started.
+                    </div>
+                </div>
+            </section>
+
+
+            <section class="panel hidden" id="detectedIssuesPanel">
+                <div class="panel-heading">
+                    <div>
+                        <h3>Automatically Detected Issues</h3>
+                        <p>Issues reported by enrolled laptop monitoring agents.</p>
+                    </div>
+                    <button class="primary-btn" id="refreshDetectedBtn" type="button">Refresh Issues</button>
+                </div>
+                <p id="detectedIssuesMessage" role="status" aria-live="polite">
+                    Select Refresh Issues to load data from the test backend.
+                </p>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Ticket</th>
+                                <th>Device</th>
+                                <th>Detected Issue / Evidence</th>
+                                <th>Priority</th>
+                                <th>Status</th>
+                                <th>Created</th>
+                            </tr>
+                        </thead>
+                        <tbody id="detectedIssueTable"></tbody>
+                    </table>
+                </div>
+            </section>
+
+<section class="panel hidden" id="platformPanel">
+                <div class="panel-heading">
+                    <div>
+                        <h3>DevOps Platform</h3>
+                        <p>Technology components used in this learning project.</p>
+                    </div>
+                </div>
+                <div class="form-panel">
+                    <p><strong>Frontend:</strong> HTML, CSS and JavaScript served by Nginx.</p>
+                    <p><strong>Backend:</strong> Python Flask REST API.</p>
+                    <p><strong>Containers:</strong> Docker.</p>
+                    <p><strong>Automation:</strong> Jenkins CI/CD pipeline.</p>
+                    <p><strong>Container registry:</strong> Docker Hub.</p>
+                    <p><strong>Future phases:</strong> Persistent database, Kubernetes, Helm and monitoring.</p>
+                    <p id="apiStatus">API connection has not been checked yet.</p>
+                    <button class="primary-btn" id="checkApiBtn" type="button">Check Backend API</button>
+                </div>
+            </section>
+
+            <footer class="footer">
+                Tech Solutions IT Service Desk · DevOps Learning Project
+            </footer>
+        </div>
+    </main>
+</div>
+
+<div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+
+<script>
+const STORAGE_KEY = "techSolutionsSupportTickets";
+
+const demoTickets = [
+    {
+        id: "TS-1001",
+        requester: "Rahul Kumar",
+        email: "rahul@example.com",
+        title: "Laptop not connecting to Wi-Fi",
+        category: "Network",
+        priority: "High",
+        status: "Open",
+        description: "Laptop cannot connect to the office Wi-Fi.",
+        created: new Date(Date.now() - 3600000).toISOString()
+    },
+    {
+        id: "TS-1002",
+        requester: "Priya Sharma",
+        email: "priya@example.com",
+        title: "Outlook application not opening",
+        category: "Software",
+        priority: "Medium",
+        status: "In Progress",
+        description: "Outlook closes immediately after launching.",
+        created: new Date(Date.now() - 7200000).toISOString()
+    },
+    {
+        id: "TS-1003",
+        requester: "Arun Kumar",
+        email: "arun@example.com",
+        title: "Keyboard replacement required",
+        category: "Hardware",
+        priority: "Low",
+        status: "Resolved",
+        description: "A replacement keyboard was installed.",
+        created: new Date(Date.now() - 86400000).toISOString()
+    }
+];
+
+function loadTickets() {
+    try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved !== null) {
+            const parsed = JSON.parse(saved);
+            if (Array.isArray(parsed)) return parsed;
+        }
+    } catch (error) {
+        console.error("Could not read saved tickets:", error);
+    }
+
+    return demoTickets.map(ticket => ({ ...ticket }));
+}
+
+let tickets = loadTickets();
+let toastTimer;
+
+function saveTickets() {
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(tickets));
+        return true;
+    } catch (error) {
+        console.error("Could not save tickets:", error);
+        showToast("Browser storage is unavailable. Changes may not persist.");
+        return false;
+    }
+}
+
+function escapeHTML(value) {
+    return String(value ?? "").replace(/[&<>"']/g, character => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+    })[character]);
+}
+
+function formatDate(value) {
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return "Unknown";
+    return date.toLocaleDateString("en-IN", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric"
+    });
+}
+
+function badgeClass(value) {
+    return String(value).replace(/\s+/g, "-");
+}
+
+function renderStats() {
+    document.getElementById("totalCount").textContent = tickets.length;
+    document.getElementById("openCount").textContent =
+        tickets.filter(ticket => ticket.status === "Open").length;
+    document.getElementById("progressCount").textContent =
+        tickets.filter(ticket => ticket.status === "In Progress").length;
+    document.getElementById("resolvedCount").textContent =
+        tickets.filter(ticket => ticket.status === "Resolved").length;
+}
+
+function renderTickets() {
+    const search = document.getElementById("searchInput").value.trim().toLowerCase();
+    const status = document.getElementById("statusFilter").value;
+    const priority = document.getElementById("priorityFilter").value;
+
+    const filtered = tickets.filter(ticket => {
+        const searchable = [
+            ticket.id, ticket.title, ticket.requester,
+            ticket.email, ticket.category
+        ].join(" ").toLowerCase();
+
+        return searchable.includes(search)
+            && (status === "All" || ticket.status === status)
+            && (priority === "All" || ticket.priority === priority);
+    });
+
+    const table = document.getElementById("ticketTable");
+
+    if (filtered.length === 0) {
+        table.innerHTML = "";
+        document.getElementById("emptyMessage").classList.remove("hidden");
+        return;
+    }
+
+    document.getElementById("emptyMessage").classList.add("hidden");
+
+    table.innerHTML = filtered.map(ticket => `
+        <tr>
+            <td><strong>${escapeHTML(ticket.id)}</strong></td>
+            <td>
+                <strong>${escapeHTML(ticket.title)}</strong>
+                <span class="subtext">${escapeHTML(ticket.requester)}</span>
+            </td>
+            <td>${escapeHTML(ticket.category)}</td>
+            <td><span class="badge priority-${badgeClass(ticket.priority)}">${escapeHTML(ticket.priority)}</span></td>
+            <td>
+                <select class="status-select" data-status-id="${escapeHTML(ticket.id)}"
+                    aria-label="Change status for ${escapeHTML(ticket.id)}">
+                    ${["Open", "In Progress", "Resolved"].map(option =>
+                        `<option value="${option}" ${ticket.status === option ? "selected" : ""}>${option}</option>`
+                    ).join("")}
+                </select>
+            </td>
+            <td>${escapeHTML(formatDate(ticket.created))}</td>
+            <td><button class="delete-btn" type="button" data-delete-id="${escapeHTML(ticket.id)}">Delete</button></td>
+        </tr>
+    `).join("");
+}
+
+function render() {
+    renderStats();
+    renderTickets();
+}
+
+function showToast(message) {
+    const toast = document.getElementById("toast");
+    toast.textContent = message;
+    toast.classList.remove("hidden");
+
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.add("hidden"), 3000);
+}
+
+
+async function renderDetectedIssues() {
+    const message = document.getElementById("detectedIssuesMessage");
+    const table = document.getElementById("detectedIssueTable");
+    message.textContent = "Loading issues from the test backend...";
+    table.innerHTML = "";
+
+    try {
+        const response = await fetch("/api/tickets");
+        if (!response.ok) throw new Error("HTTP " + response.status);
+
+        const data = await response.json();
+        const detected = (data.tickets || []).filter(
+            ticket => ticket.source === "automatic"
+        );
+
+        message.textContent = "Automatically detected issues: " + detected.length;
+
+        if (detected.length === 0) {
+            table.innerHTML = '<tr><td colspan="6">No automatically detected issues found.</td></tr>';
+            return;
+        }
+
+        table.innerHTML = detected.map(ticket => {
+            const evidence = JSON.stringify(ticket.evidence || {});
+            return `
+                <tr>
+                    <td><strong>${escapeHTML(ticket.id)}</strong></td>
+                    <td>${escapeHTML(ticket.device_id || "Unknown device")}</td>
+                    <td>
+                        <strong>${escapeHTML(ticket.title)}</strong>
+                        <span class="subtext">${escapeHTML(evidence)}</span>
+                    </td>
+                    <td>
+                        <span class="badge priority-${badgeClass(ticket.priority)}">
+                            ${escapeHTML(ticket.priority)}
+                        </span>
+                    </td>
+                    <td>${escapeHTML(ticket.status)}</td>
+                    <td>${escapeHTML(formatDate(ticket.created_at))}</td>
+                </tr>`;
+        }).join("");
+    } catch (error) {
+        message.textContent =
+            "Could not load detected issues: " + error.message +
+            ". Check the test backend and Nginx connection.";
+    }
+}
+
+function showDetectedIssues() {
+    document.getElementById("formPanel").classList.add("hidden");
+    document.getElementById("ticketsPanel").classList.add("hidden");
+    document.getElementById("platformPanel").classList.add("hidden");
+    document.getElementById("detectedIssuesPanel").classList.remove("hidden");
+    document.getElementById("welcomeSection").classList.add("hidden");
+    document.getElementById("statsSection").classList.add("hidden");
+    setActive("detectedIssuesNav");
+    renderDetectedIssues();
+}
+
+function showForm() {
+    document.getElementById("detectedIssuesPanel").classList.add("hidden");
+    document.getElementById("formPanel").classList.remove("hidden");
+    document.getElementById("ticketsPanel").classList.add("hidden");
+    document.getElementById("platformPanel").classList.add("hidden");
+    document.getElementById("welcomeSection").classList.add("hidden");
+    document.getElementById("statsSection").classList.add("hidden");
+    setActive("createNav");
+    document.getElementById("requester").focus();
+}
+
+function showDashboard() {
+    document.getElementById("detectedIssuesPanel").classList.add("hidden");
+    document.getElementById("formPanel").classList.add("hidden");
+    document.getElementById("ticketsPanel").classList.remove("hidden");
+    document.getElementById("platformPanel").classList.add("hidden");
+    document.getElementById("welcomeSection").classList.remove("hidden");
+    document.getElementById("statsSection").classList.remove("hidden");
+    document.getElementById("ticketHeading").textContent = "Recent Support Tickets";
+    setActive("dashboardNav");
+    render();
+}
+
+function showAllTickets() {
+    document.getElementById("detectedIssuesPanel").classList.add("hidden");
+    document.getElementById("formPanel").classList.add("hidden");
+    document.getElementById("ticketsPanel").classList.remove("hidden");
+    document.getElementById("platformPanel").classList.add("hidden");
+    document.getElementById("welcomeSection").classList.add("hidden");
+    document.getElementById("statsSection").classList.remove("hidden");
+    document.getElementById("ticketHeading").textContent = "All Support Tickets";
+    setActive("ticketsNav");
+    render();
+}
+
+function showPlatform() {
+    document.getElementById("detectedIssuesPanel").classList.add("hidden");
+    document.getElementById("formPanel").classList.add("hidden");
+    document.getElementById("ticketsPanel").classList.add("hidden");
+    document.getElementById("platformPanel").classList.remove("hidden");
+    document.getElementById("welcomeSection").classList.add("hidden");
+    document.getElementById("statsSection").classList.add("hidden");
+    setActive("platformNav");
+}
+
+function setActive(activeId) {
+    document.querySelectorAll(".nav-item").forEach(button => {
+        button.classList.toggle("active", button.id === activeId);
+    });
+}
+
+document.getElementById("dashboardNav").addEventListener("click", showDashboard);
+document.getElementById("ticketsNav").addEventListener("click", showAllTickets);
+document.getElementById("detectedIssuesNav").addEventListener("click", showDetectedIssues);
+document.getElementById("refreshDetectedBtn").addEventListener("click", renderDetectedIssues);
+document.getElementById("createNav").addEventListener("click", showForm);
+document.getElementById("newTicketBtn").addEventListener("click", showForm);
+document.getElementById("platformNav").addEventListener("click", showPlatform);
+
+document.getElementById("cancelBtn").addEventListener("click", () => {
+    document.getElementById("ticketForm").reset();
+    showDashboard();
+});
+
+document.getElementById("ticketForm").addEventListener("submit", event => {
+    event.preventDefault();
+
+    const form = new FormData(event.target);
+    const ticket = {
+        id: "TS-" + Date.now().toString().slice(-8),
+        requester: form.get("requester").trim(),
+        email: form.get("email").trim(),
+        title: form.get("title").trim(),
+        category: form.get("category"),
+        priority: form.get("priority"),
+        description: form.get("description").trim(),
+        status: "Open",
+        created: new Date().toISOString()
+    };
+
+    if (!ticket.requester || !ticket.email || !ticket.title || !ticket.description) {
+        showToast("Please complete all required fields.");
+        return;
+    }
+
+    tickets.unshift(ticket);
+    saveTickets();
+    event.target.reset();
+    showDashboard();
+    showToast("Ticket " + ticket.id + " created successfully.");
+});
+
+document.getElementById("ticketTable").addEventListener("change", event => {
+    const id = event.target.dataset.statusId;
+    if (!id) return;
+
+    const ticket = tickets.find(item => item.id === id);
+    if (!ticket) return;
+
+    ticket.status = event.target.value;
+    saveTickets();
+    render();
+    showToast(id + " status updated.");
+});
+
+document.getElementById("ticketTable").addEventListener("click", event => {
+    const id = event.target.dataset.deleteId;
+    if (!id) return;
+
+    if (!confirm("Delete ticket " + id + "? This cannot be undone.")) return;
+
+    tickets = tickets.filter(ticket => ticket.id !== id);
+    saveTickets();
+    render();
+    showToast("Ticket deleted.");
+});
+
+document.getElementById("searchInput").addEventListener("input", renderTickets);
+document.getElementById("statusFilter").addEventListener("change", renderTickets);
+document.getElementById("priorityFilter").addEventListener("change", renderTickets);
+
+document.getElementById("checkApiBtn").addEventListener("click", async () => {
+    const result = document.getElementById("apiStatus");
+    result.textContent = "Checking backend API...";
+
+    try {
+        const response = await fetch("/api/info");
+        if (!response.ok) throw new Error("HTTP " + response.status);
+
+        const data = await response.json();
+        result.textContent = "Backend connected: " + data.backend + " | Deployment: " + data.deployment;
+    } catch (error) {
+        result.textContent = "Backend check failed: " + error.message;
+    }
+});
+
+render();
+</script>
+</body>
+</html>
