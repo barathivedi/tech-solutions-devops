@@ -1,0 +1,303 @@
+pipeline {
+    agent any
+
+    options {
+        disableConcurrentBuilds()
+    }
+
+    environment {
+        REPO_URL = 'https://github.com/barathivedi/tech-solutions-devops.git'
+        BRANCH_NAME = 'feature/it-ticketing-backend'
+
+        BACKEND_IMAGE = 'tech-solutions-backend'
+        FRONTEND_IMAGE = 'tech-solutions-frontend'
+
+        TEST_NETWORK = "tech-solutions-dashboard-ci-${BUILD_NUMBER}"
+        TEST_BACKEND = "tech-solutions-dashboard-backend-ci-${BUILD_NUMBER}"
+        TEST_FRONTEND = "tech-solutions-dashboard-frontend-ci-${BUILD_NUMBER}"
+
+        CI_AGENT_TOKEN = 'ci-test-agent-token'
+        CI_DEVICE_ID = 'CI-DEMO-LAPTOP-001'
+    }
+
+    stages {
+        stage('Checkout Development Branch') {
+            steps {
+                echo 'Checking out dashboard development branch'
+
+                git branch: "${BRANCH_NAME}",
+                    url: "${REPO_URL}"
+            }
+        }
+
+        stage('Validate Source Code') {
+            steps {
+                echo 'Validating application source code'
+
+                sh '''
+                    set -eu
+
+                    test -f backend/Dockerfile
+                    test -f backend/app.py
+                    test -f backend/requirements.txt
+
+                    test -f frontend-dashboard-test/Dockerfile
+                    test -f frontend-dashboard-test/index.html
+                    test -f frontend-dashboard-test/nginx.conf
+
+                    python3 -m py_compile backend/app.py
+
+                    grep -q 'detectedIssuesNav' \
+                        frontend-dashboard-test/index.html
+
+                    grep -q 'Automatically Detected Issues' \
+                        frontend-dashboard-test/index.html
+
+                    echo "Source-code checks passed."
+                '''
+            }
+        }
+
+        stage('Build Backend Test Image') {
+            steps {
+                echo 'Building backend Docker image'
+
+                sh '''
+                    set -eu
+
+                    docker build \
+                        -t "${BACKEND_IMAGE}:dashboard-ci-${BUILD_NUMBER}" \
+                        ./backend
+                '''
+            }
+        }
+
+        stage('Build Dashboard Test Image') {
+            steps {
+                echo 'Building dashboard Docker image'
+
+                sh '''
+                    set -eu
+
+                    docker build \
+                        -t "${FRONTEND_IMAGE}:dashboard-ci-${BUILD_NUMBER}" \
+                        ./frontend-dashboard-test
+                '''
+            }
+        }
+
+        stage('Validate Nginx Configuration') {
+            steps {
+                echo 'Validating Nginx configuration'
+
+                sh '''
+                    set -eu
+
+                    docker run --rm \
+                        --add-host tech-solutions-backend-task-delivery-test:127.0.0.1 \
+                        --entrypoint nginx \
+                        "${FRONTEND_IMAGE}:dashboard-ci-${BUILD_NUMBER}" \
+                        -t
+
+                    echo "Nginx configuration test passed."
+                '''
+            }
+        }
+
+        stage('Run Isolated Integration Tests') {
+            steps {
+                echo 'Preparing isolated integration environment'
+
+                sh '''
+                    set -eu
+
+                    docker rm -f "${TEST_FRONTEND}" \
+                        >/dev/null 2>&1 || true
+
+                    docker rm -f "${TEST_BACKEND}" \
+                        >/dev/null 2>&1 || true
+
+                    docker network rm "${TEST_NETWORK}" \
+                        >/dev/null 2>&1 || true
+
+                    docker network create "${TEST_NETWORK}"
+
+                    docker run -d \
+                        --name "${TEST_BACKEND}" \
+                        --network "${TEST_NETWORK}" \
+                        --network-alias tech-solutions-backend-task-delivery-test \
+                        -e AGENT_API_TOKEN="${CI_AGENT_TOKEN}" \
+                        "${BACKEND_IMAGE}:dashboard-ci-${BUILD_NUMBER}"
+
+                    BACKEND_READY=false
+
+                    for i in $(seq 1 20); do
+                        if docker exec "${TEST_BACKEND}" \
+                            python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:5000/health', timeout=2)" \
+                            >/dev/null 2>&1; then
+
+                            BACKEND_READY=true
+                            echo "Test backend is healthy."
+                            break
+                        fi
+
+                        sleep 2
+                    done
+
+                    if [ "${BACKEND_READY}" != true ]; then
+                        echo "Test backend health check failed."
+                        docker logs "${TEST_BACKEND}" || true
+                        exit 1
+                    fi
+
+                    docker exec \
+                        -e CI_AGENT_TOKEN="${CI_AGENT_TOKEN}" \
+                        -e CI_DEVICE_ID="${CI_DEVICE_ID}" \
+                        "${TEST_BACKEND}" \
+                        python -c '
+import json
+import os
+import urllib.request
+
+payload = {
+    "device_id": os.environ["CI_DEVICE_ID"],
+    "hostname": os.environ["CI_DEVICE_ID"],
+    "metrics": {
+        "disk_free_percent": 3,
+        "cpu_percent": 25,
+        "memory_percent": 55,
+        "network_connected": True
+    }
+}
+
+request = urllib.request.Request(
+    "http://127.0.0.1:5000/api/agent/health",
+    data=json.dumps(payload).encode("utf-8"),
+    headers={
+        "Authorization": "Bearer " + os.environ["CI_AGENT_TOKEN"],
+        "Content-Type": "application/json"
+    },
+    method="POST"
+)
+
+with urllib.request.urlopen(request, timeout=10) as response:
+    result = json.loads(response.read().decode("utf-8"))
+    print(json.dumps(result))
+
+    if response.status != 201:
+        raise SystemExit("Unexpected health-report API status.")
+
+    issues = result.get("issues_detected", [])
+
+    if not any(
+        issue.get("issue_code") == "LOW_DISK_SPACE"
+        for issue in issues
+    ):
+        raise SystemExit("Low disk space issue was not detected.")
+
+    if not result.get("tickets_created"):
+        raise SystemExit("No automatic ticket was created.")
+
+print("Automatic issue detection test passed.")
+'
+
+                    docker run -d \
+                        --name "${TEST_FRONTEND}" \
+                        --network "${TEST_NETWORK}" \
+                        "${FRONTEND_IMAGE}:dashboard-ci-${BUILD_NUMBER}"
+
+                    FRONTEND_READY=false
+
+                    for i in $(seq 1 20); do
+                        if docker exec "${TEST_FRONTEND}" \
+                            wget -qO- http://127.0.0.1/health \
+                            >/dev/null 2>&1; then
+
+                            FRONTEND_READY=true
+                            echo "Dashboard health check passed."
+                            break
+                        fi
+
+                        sleep 2
+                    done
+
+                    if [ "${FRONTEND_READY}" != true ]; then
+                        echo "Dashboard health check failed."
+                        docker logs "${TEST_FRONTEND}" || true
+                        exit 1
+                    fi
+
+                    PAGE="$(docker exec "${TEST_FRONTEND}" \
+                        wget -qO- http://127.0.0.1/)"
+
+                    printf '%s\\n' "${PAGE}" |
+                        grep -q 'Automatically Detected Issues'
+
+                    printf '%s\\n' "${PAGE}" |
+                        grep -q 'Refresh Issues'
+
+                    echo "Dashboard HTML checks passed."
+
+                    API_RESPONSE="$(docker exec "${TEST_FRONTEND}" \
+                        wget -qO- http://127.0.0.1/api/tickets)"
+
+                    printf '%s\\n' "${API_RESPONSE}" |
+                        grep -q '"tickets"'
+
+                    printf '%s\\n' "${API_RESPONSE}" |
+                        grep -q '"source":"automatic"'
+
+                    printf '%s\\n' "${API_RESPONSE}" |
+                        grep -q '"issue_code":"LOW_DISK_SPACE"'
+
+                    printf '%s\\n' "${API_RESPONSE}" |
+                        grep -q '"device_id":"CI-DEMO-LAPTOP-001"'
+
+                    printf '%s\\n' "${API_RESPONSE}" |
+                        grep -q '"priority":"Critical"'
+
+                    echo "Automatic ticket retrieval test passed."
+                    printf '%s\\n' "${API_RESPONSE}"
+
+                    echo "All integration tests passed."
+                '''
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Cleaning up temporary dashboard CI resources.'
+
+            sh '''
+                set +e
+
+                docker rm -f "${TEST_FRONTEND}" \
+                    >/dev/null 2>&1 || true
+
+                docker rm -f "${TEST_BACKEND}" \
+                    >/dev/null 2>&1 || true
+
+                docker network rm "${TEST_NETWORK}" \
+                    >/dev/null 2>&1 || true
+
+                docker image rm \
+                    "${FRONTEND_IMAGE}:dashboard-ci-${BUILD_NUMBER}" \
+                    >/dev/null 2>&1 || true
+
+                docker image rm \
+                    "${BACKEND_IMAGE}:dashboard-ci-${BUILD_NUMBER}" \
+                    >/dev/null 2>&1 || true
+            '''
+        }
+
+        success {
+            echo 'SUCCESS: Dashboard CI and automatic issue detection tests passed. No production deployment was performed.'
+        }
+
+        failure {
+            echo 'FAILURE: Inspect the first failed stage in Console Output.'
+            echo 'Production deployment was not performed.'
+        }
+    }
+}
